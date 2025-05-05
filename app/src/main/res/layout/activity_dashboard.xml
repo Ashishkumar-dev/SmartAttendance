@@ -5,73 +5,209 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DashboardActivity">
+    android:background="@drawable/gradient_bg"
+    tools:context=".DashboardActivity"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="103dp">
 
-    <Button
-        android:id="@+id/addbtn"
+    <!-- Title -->
+    <TextView
+        android:id="@+id/dashboardTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add/Edit Students"
-        app:layout_constraintBottom_toTopOf="@+id/viewbtn"
+        android:layout_marginTop="132dp"
+        android:text="Admin Dashboard"
+        android:textColor="#ffff"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.514"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.824" />
+        app:layout_constraintTop_toTopOf="parent" />
+    <View
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@color/dark_purple"
+        app:layout_constraintTop_toBottomOf="@id/dashboardTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <Button
+    <!-- Attendance Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/attendanceCard"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="24dp"
+        android:background="@android:color/transparent"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dashboardTitle">
+
+        <!-- Fixed layout for progress and label -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dark_purple"
+            android:padding="16dp"
+            tools:layout_editor_absoluteX="24dp"
+            tools:layout_editor_absoluteY="183dp">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/attendanceTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="Today's Attendance"
+                android:textColor="#ffff"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="40dp"
+                tools:layout_editor_absoluteY="247dp" />
+
+            <!-- Progress circle with percentage -->
+            <FrameLayout
+                android:id="@+id/progressContainer"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                tools:layout_editor_absoluteX="271dp"
+                tools:layout_editor_absoluteY="208dp">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/circularProgress"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:indicatorColor="@color/teal_700"
+                    app:indicatorInset="0dp"
+                    app:indicatorSize="100dp"
+                    app:trackColor="@android:color/darker_gray"
+                    app:trackThickness="8dp"
+                    tools:layout_editor_absoluteX="271dp"
+                    tools:layout_editor_absoluteY="208dp" />
+
+                <TextView
+                    android:id="@+id/attendancePercentage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="0%"
+                    android:textColor="#ffff"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:layout_editor_absoluteX="271dp"
+                    tools:layout_editor_absoluteY="208dp" />
+            </FrameLayout>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Function Buttons Grid -->
+    <GridLayout
+        android:id="@+id/buttonGrid"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        android:alignmentMode="alignMargins"
+        android:columnCount="2"
+        android:columnOrderPreserved="false"
+        android:rowCount="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/attendanceCard">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/viewbtn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:icon="@drawable/ic_search"
+            android:iconTint="#7C3AED"
+            android:text="View Attendance"
+            android:textColor="#ffff"
+            app:cornerRadius="20dp"
+            app:strokeColor="#7C3AED"
+            tools:layout_editor_absoluteX="32dp"
+            tools:layout_editor_absoluteY="365dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addbtn"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:icon="@drawable/ic_add_user"
+            android:iconTint="#7C3AED"
+            android:text="Add / Edit Students"
+            android:textColor="#ffff"
+            app:cornerRadius="20dp"
+            app:strokeColor="#7C3AED"
+            tools:layout_editor_absoluteX="214dp"
+            tools:layout_editor_absoluteY="365dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/captureface"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:icon="@drawable/ic_face"
+            android:iconTint="#7C3AED"
+            android:text="Capture Student Face"
+            android:textColor="#ffff"
+            app:cornerRadius="20dp"
+            app:strokeColor="#7C3AED"
+            tools:layout_editor_absoluteX="32dp"
+            tools:layout_editor_absoluteY="437dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/setLocation"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            android:icon="@drawable/ic_location"
+            android:iconTint="#7C3AED"
+            android:text="Set Classroom Location"
+            android:textColor="#ffff"
+            app:cornerRadius="20dp"
+            app:strokeColor="#7C3AED"
+            tools:layout_editor_absoluteX="214dp"
+            tools:layout_editor_absoluteY="437dp" />
+    </GridLayout>
+
+    <!-- Take Attendance Button -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/attendancebtn"
-        android:layout_width="wrap_content"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="220dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        android:icon="@drawable/ic_check"
+        android:iconTint="#7C3AED"
         android:text="Take Attendance"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="#ffff"
+        app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/viewbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="View Attendance"
-        app:layout_constraintBottom_toTopOf="@+id/attendancebtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="141dp"
-        android:layout_height="46dp"
-        android:text="Attendance"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/textView3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.922" />
+        app:layout_constraintTop_toBottomOf="@id/buttonGrid"
+        app:strokeColor="#7C3AED" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="104dp"
-        android:text="Today : 75%"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/addbtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/captureface"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Capture Student Face"
-        app:layout_constraintBottom_toTopOf="@+id/viewbtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addbtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

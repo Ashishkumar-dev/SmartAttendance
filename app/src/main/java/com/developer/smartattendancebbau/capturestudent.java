@@ -2,6 +2,7 @@ package com.developer.smartattendancebbau;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.media.ImageReader;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -29,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -69,11 +72,12 @@ public class capturestudent extends AppCompatActivity {
     private Interpreter tflite;
     private FirebaseFirestore db;
     private DocumentReference studentRef;
-    private Map<String, float[]> capturedEmbeddings = new HashMap<>();
+    private final Map<String, float[]> capturedEmbeddings = new HashMap<>();
     private static final String TAG = "FaceRecognition";
     private EditText stdrollno;
     private ImageView check;
     private Button btn;
+    private ImageView imageView;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -89,7 +93,18 @@ public class capturestudent extends AppCompatActivity {
         });
         // Initialize Firebase
         db = FirebaseFirestore.getInstance();
-
+        // OnBackButtonPress
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE){
+            getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    finish();
+                }
+            });
+        }
+        else{
+            onBackPressed();
+        }
 //        Load facemodel
         try {
             tflite = new Interpreter((loadModelFile()));
@@ -100,8 +115,9 @@ public class capturestudent extends AppCompatActivity {
         }
         textureView = findViewById(R.id.textureView3);
         check = findViewById(R.id.imageView3);
-         btn = findViewById(R.id.button3);
+         btn = findViewById(R.id.capturefaceBtn);
         stdrollno = findViewById(R.id.editTextText3);
+        imageView = findViewById(R.id.circle2);
         FrameLayout cameraFrame = findViewById(R.id.frameLayout3);
         cameraFrame.setOutlineProvider(new ViewOutlineProvider() {
             @Override
@@ -124,17 +140,46 @@ public class capturestudent extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String rollno = stdrollno.getText().toString().trim();
-                if (rollno.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Please enter student roll number to capture face", Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    captureAndProcessFaces();
 
+                if(rollno.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Enter roll number to capture face", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                // check if the student details exits first
+                    studentRef = db.collection("students").document(rollno);
+                studentRef.get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+
+                        captureAndProcessFaces();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Student details not found. Please check the roll number.", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(e ->
+                        Log.e(TAG, "Error checking student details", e)
+                );
             }
             }
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        String previous = getIntent().getStringExtra("previous");
+        if("studentportal".equals(previous)){
+            Intent intent = new Intent(this, studentportalActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        }
+        else {
+            Intent intent = new Intent(this, DashboardActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+        }
+        finish();
+    }
+
     private MappedByteBuffer loadModelFile() throws IOException {
         AssetFileDescriptor fileDescriptor = getAssets().openFd("facenet.tflite");
         FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
@@ -182,6 +227,7 @@ public class capturestudent extends AppCompatActivity {
             return;
         }
         successtick();
+        greencircle();
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(() -> {
@@ -197,7 +243,7 @@ public class capturestudent extends AppCompatActivity {
                 normal += value * value;
             }
             normal = Math.sqrt(normal);
-            Log.d("ashishjuli", "Embedding Norm: " + normal); // Log for debugging
+            Log.d("ashish", "Embedding Norm: " + normal); // Log for debugging
 //            Log.d(TAG, "Embedding for " + angle + ": " + Arrays.toString(embedding));
             if (isDuplicateFace(embedding)) {
                 Toast.makeText(this, "Duplicate face detected! Please capture again.", Toast.LENGTH_SHORT).show();
@@ -234,30 +280,25 @@ public class capturestudent extends AppCompatActivity {
     private void uploadEmbeddings() {
         String studentID = stdrollno.getText().toString().trim();
         studentRef = db.collection("students").document(studentID);
-        Map<String, Object> embeddingsMap = new HashMap<>();
-        for (Map.Entry<String, float[]> entry : capturedEmbeddings.entrySet()){
-        String angle = entry.getKey();
-        float[] embedding = entry.getValue();
 
-        Map<String, Object> embeddingData = new HashMap<>();
-        for(int i=0; i < embedding.length; i++){
-            float[] values = embedding;
-            double normal = 0;
-            for (float value : values) {
-                normal += value * value;
+        Map<String, Object> embeddingsMap = new HashMap<>();
+
+        for (Map.Entry<String, float[]> entry : capturedEmbeddings.entrySet()) {
+            String angle = entry.getKey();
+            float[] embedding = entry.getValue();
+
+            List<Float> embeddingList = new ArrayList<>();
+            for (float value : embedding) {
+                embeddingList.add(value);
             }
-            normal = Math.sqrt(normal);
-            embeddingData.put("dim_"+i, normal);
-            Log.d("ashishjuli", "Embedding Normally: " + normal);
+
+            embeddingsMap.put(angle, embeddingList);
         }
-        Log.d("ashishjuli", "Embedding Data: " + embeddingData);
-        embeddingsMap.put(angle, embeddingData);
-        }
-        studentRef.update("embeddings", embeddingsMap)
-                .addOnSuccessListener(aVoid ->  Toast.makeText(this, "All face angles captured successfully!", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Log.e(TAG,"Error uploading embeddings",e));
-        List<Map<String, Object>> embeddingList = new ArrayList<>();
+        studentRef.update(Collections.singletonMap("embeddings", embeddingsMap))
+                .addOnSuccessListener(aVoid -> Toast.makeText(this, "All face angles captured successfully!", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Log.e(TAG, "Error uploading embeddings", e));
     }
+
 
     private void successtick() {
         check.setAlpha(0f);
@@ -269,6 +310,15 @@ public class capturestudent extends AppCompatActivity {
                 });
             }, 200);
         });
+    }
+    private void greencircle(){
+        imageView.setImageResource(R.drawable.circle_mask_green);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                imageView.setImageResource(R.drawable.circle_mask);
+            }
+        },500);
     }
 
     private float[] generateEmbedding(Bitmap face) {
@@ -304,7 +354,7 @@ public class capturestudent extends AppCompatActivity {
     }
 
     private ByteBuffer preprocessBitmap(Bitmap bitmap) {
-        ByteBuffer buffer = ByteBuffer.allocateDirect(1 * 160 * 160 * 3 * 4);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(160 * 160 * 3 * 4);
         buffer.order(ByteOrder.nativeOrder());
 
         int[] pixels = new int[160 * 160];

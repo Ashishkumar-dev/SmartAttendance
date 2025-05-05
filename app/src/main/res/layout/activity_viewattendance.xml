@@ -1,13 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".viewattendanceActivity">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".viewattendanceActivity"
+        android:orientation="vertical"
+        android:background="@drawable/gradient_bg"
+        android:padding="10dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/dateTextView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selected Date: "
+            android:textColor="#FFFF"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginEnd="8dp"/>
+
+        <ImageView
+            android:id="@+id/calendarIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_calendar"
+            android:background="@drawable/rounded_text"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:contentDescription="Calendar Icon"
+            android:clickable="true"
+            android:focusable="true"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical">
+
+        <EditText
+            android:id="@+id/studentidtextview"
+            android:layout_width="250dp"
+            android:layout_height="55dp"
+            android:background="@drawable/rounded_text"
+            android:hint="Search By Roll Number"
+            android:textColor="#ffff"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textColorHint="#AAAA"
+            android:inputType="number"
+            android:singleLine="true" />
+
+        <ImageView
+            android:id="@+id/searchmenuicon"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:background="@drawable/rounded_text"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            app:srcCompat="@android:drawable/ic_menu_search" />
+    </LinearLayout>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/Totalpresent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+    </LinearLayout>
