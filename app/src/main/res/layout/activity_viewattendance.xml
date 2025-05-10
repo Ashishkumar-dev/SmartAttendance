@@ -67,6 +67,14 @@
             android:layout_weight="1"
             android:layout_marginLeft="5dp"
             app:srcCompat="@android:drawable/ic_menu_search" />
+        <ImageView
+            android:id="@+id/btnPrintAttendance"
+            android:layout_width="wrap_content"
+            android:layout_height="55dp"
+            android:background="@drawable/rounded_text"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            app:srcCompat="@drawable/ic_print" />
     </LinearLayout>
         <ProgressBar
             android:id="@+id/progressBar"

@@ -7,10 +7,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Collections;
 import java.util.List;
 
 public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.ViewHolder> {
-    private final List<Student> studentList;
+    private static List<Student> studentList = Collections.emptyList();
 
     public StudentAdapter(List<Student> studentList) {
         this.studentList = studentList;
@@ -43,6 +45,9 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.ViewHold
     @Override
     public int getItemCount() {
         return studentList.size();
+    }
+    public static List<Student>getStudentList(){
+        return studentList;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -2,8 +2,10 @@ package com.developer.smartattendancebbau;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.print.PrintManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
@@ -85,6 +87,11 @@ public class viewattendanceActivity extends AppCompatActivity {
         dateTextView.setText("Selected Date: " + selectedDate);
 
         databaseReference = FirebaseDatabase.getInstance().getReference("students");
+        ImageView btnPrint = findViewById(R.id.btnPrintAttendance);
+        btnPrint.setOnClickListener(v -> {
+            printRecyclerView(recyclerView); // replace with your RecyclerView variable
+        });
+
         // OnBackButtonPress
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE){
             getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -111,6 +118,11 @@ public class viewattendanceActivity extends AppCompatActivity {
         calendarIcon.setOnClickListener(v -> showDatePicker());
         dateTextView.setOnClickListener(v -> showDatePicker());
 
+    }
+
+    private void printRecyclerView(RecyclerView recyclerView) {
+        PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
+        printManager.print("Attendance_Print", new RecyclerViewPrintAdapter(this, recyclerView), null);
     }
 
     @Override
